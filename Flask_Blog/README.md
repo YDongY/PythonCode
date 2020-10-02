@@ -14,15 +14,15 @@
 
 ## 预览截图
 
-![](https://github.com/YDongY/code_snippets/master/images/home-page.jpg)
+![](https://github.com/YDongY/code_snippets/blob/master/images/home-page.png)
 
-![](https://github.com/YDongY/code_snippets/master/images/post-page.jpg)
+![](https://github.com/YDongY/code_snippets/blob/master/images/post-page.png)
 
-![](https://github.com/YDongY/code_snippets/master/images/login-page.jpg)
+![](https://github.com/YDongY/code_snippets/blob/master/images/login-page.png)
 
-![](https://github.com/YDongY/code_snippets/master/images/register-page.jpg)
+![](https://github.com/YDongY/code_snippets/blob/master/images/register-page.png)
 
-![](https://github.com/YDongY/code_snippets/master/images/account-page.jpg)
+![](https://github.com/YDongY/code_snippets/blob/master/images/account-page.png)
 
 
 ## 技术实现
