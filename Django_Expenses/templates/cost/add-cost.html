@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Add Cost</h1>
+    <div class="container mt-4">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="{% url 'cost:index' %}">Expenses</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">Add Expenses</li>
+            </ol>
+        </nav>
+
+        <div class="card">
+            <div class="card-body">
+                <form action="{% url 'cost:add-cost' %}" method="post">
+                    {% include 'partials/_messages.html' %}
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="">总计</label>
+                        <input type="number" class="form-control form-control-sm" name="amount"
+                               value="{{ values.amount }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="">描述</label>
+                        <input type="text" class="form-control form-control-sm" name="description"
+                               value="{{ values.description }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="">类型</label>
+                        <select class="form-control" name="category">
+                            {% for category in categories %}
+                                <option name="category" value="{{ category.name }}">{{ category.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="">日期</label>
+                        <input type="date" class="form-control form-control-sm" name="expense_date">
+                    </div>
+
+                    <input type="submit" value="保存" class="btn btn-primary btn-primary-sm">
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
