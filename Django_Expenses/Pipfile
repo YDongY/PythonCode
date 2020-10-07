@@ -9,6 +9,9 @@ validate-email = "*"
 celery = "*"
 itsdangerous = "*"
 redis = "*"
+xlwt = "*"
+reportlab = "*"
+weasyprint = "*"
 
 [dev-packages]
 

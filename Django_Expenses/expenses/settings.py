@@ -131,7 +131,7 @@ EMAIL_PORT = 25
 # 发送邮件的邮箱
 EMAIL_HOST_USER = '1140068769@qq.com'
 # 在邮箱中设置的客户端授权密码
-EMAIL_HOST_PASSWORD = 'dumgzhvuxdiyghji'
+EMAIL_HOST_PASSWORD = ''
 # 收件人看到的发件人
 EMAIL_FROM = '资产明细后台<1140068769@qq.com>'
 
