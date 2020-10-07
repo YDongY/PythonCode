@@ -1,0 +1,76 @@
+# =====================查询所有====================
+Role.query.all()
+db.session.query(Role).all()
+
+
+# ================根据id查询==========================
+Role.query.get(id)
+db.session.query(Role).get(id)
+db.session.query(Role).first()
+
+
+# ================filter_by过滤：结果是个查询集，查询不到不会抛出异常，返回NoneType=============
+User.query.filter_by(name='wang').all()
+User.query.filter_by(name='wang',role_id=1).first().name
+
+# ====================filter==================
+User.query.filter(User.name=='wang',User.role_id==1).all()
+
+# ==================‘或’操作===============
+from sqlalchemy import or_
+User.query.filter(or_(User.name=='wang',User.email.endswith('163.com'))).all()
+结果：[<db_demo.User at 0x7f3a36143f90>, <db_demo.User at 0x7f3a357c9450>]
+
+# ===================offset():偏移，跳过几条数据===========
+User.query.offset(2).all()
+
+# ===================limit===============
+# 跳过一条，取两条
+User.query.offset(1).limit(2).all()
+
+# ================order_by:排序============
+# 逆序：
+    User.query.order_by('-id').all()  # 非官方
+    User.query.order_by(User.id.desc()).all()  # 官方，推荐
+# 默认升序
+    User.query.order_by(User.id.asc()).all()
+
+# ===============group_by:分组============
+# select role_id,count(role_id) from tbl_users group by role_id
+
+from sqlalchemy import func
+db.session.query(User.role_id,func.count(User.role_id)).group_by(User.role_id).all()
+
+# ====================关联查询================
+# role------->user
+ro = Role.query.get(1)
+ro.users
+
+# user-------->role
+Role.query.get(user.role_id)
+
+# 使用backref可以使用：
+user.role
+
+
+# ==================定义显示信息===================
+ def __repr__(self):
+        '''定义之后，可以显示对象更直观'''
+        return "User object: name=%s" % self.name
+
+
+# =====================修改====================
+user = User.query.get(1)
+user.name = 'python'
+db.session.add(user)
+db.session.commit()
+
+User.query.filter_by(name='zhou').update({'name':'python2','email':'python@itcast.cn'})
+db.session.commit()
+
+
+# ===================删除======================
+user = User.query.get(3)
+db.session.delete(user)
+db.session.commit()
+

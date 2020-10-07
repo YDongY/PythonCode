@@ -1,0 +1,44 @@
+{% extends 'news/base.html' %}
+{% block titleBlock %}
+    首页-新经资讯
+{% endblock %}
+{% block script %}
+    <script type="text/javascript" src="../../static/news/js/index.js"></script>
+    <script type="text/javascript" src="../../static/news/js/main.js"></script>
+{% endblock %}
+
+{% block headerBlock %}
+    {% if data.category_info %}
+        {% for category in data.category_info %}
+            <li class="{% if loop.index == 1 %}active{% endif %}" data-cid="{{ category.id }}"><a
+                    href="javascript:;">{{ category.name }}</a></li>
+        {% endfor %}
+    {% endif %}
+{% endblock %}
+
+{% block conterBlock %}
+    <ul class="list_con fl">
+        {% if data.news_info %}
+            {% for news in data.news_info %}
+                <li>
+                    <a href="#" class="news_pic fl"><img src="{{ news.index_image_url }}"></a>
+                    <a href="#" class="news_title fl">{{ news.title }}</a>
+                    <a href="#" class="news_detail fl">{{ news.digest }}</a>
+                    <div class="author_info fl">
+                        {% if news.author %}
+                            <div class="author fl">
+                                <img src="{{ news.author.avatar_url }}" alt="author">
+                                <a href="#">{{ news.author.nick_name }}</a>
+                            </div>
+                        {% else %}
+                            <div class="source fl">
+                                来源：{{ news.source }}
+                            </div>
+                        {% endif %}
+                        <div class="time fl">{{ news.create_time }}</div>
+                    </div>
+                </li>
+            {% endfor %}
+        {% endif %}
+    </ul>
+{% endblock %}
