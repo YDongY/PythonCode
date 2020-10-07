@@ -14,6 +14,11 @@
 
 ## 预览截图
 
+![](https://github.com/YDongY/code_snippets/blob/master/Django_Expenses/assets/login.png)
+![](https://github.com/YDongY/code_snippets/blob/master/Django_Expenses/assets/register.png)
+![](https://github.com/YDongY/code_snippets/blob/master/Django_Expenses/assets/rest-password.png)
+![](https://github.com/YDongY/code_snippets/blob/master/Django_Expenses/assets/expense-index.png)
+![](https://github.com/YDongY/code_snippets/blob/master/Django_Expenses/assets/expense-edit.png)
 
 ## 技术实现
 
