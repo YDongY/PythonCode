@@ -14,15 +14,16 @@
 
 ## 预览截图
 
-![](https://github.com/YDongY/code_snippets/blob/master/images/home-page.png)
 
-![](https://github.com/YDongY/code_snippets/blob/master/images/post-page.png)
+![](https://github.com/YDongY/code_snippets/blob/master/Flask_Blog/assets/home-page.png)
 
-![](https://github.com/YDongY/code_snippets/blob/master/images/login-page.png)
+![](https://github.com/YDongY/code_snippets/blob/master/Flask_Blog/assets/post-page.png)
 
-![](https://github.com/YDongY/code_snippets/blob/master/images/register-page.png)
+![](https://github.com/YDongY/code_snippets/blob/master/Flask_Blog/assets/login-page.png)
 
-![](https://github.com/YDongY/code_snippets/blob/master/images/account-page.png)
+![](https://github.com/YDongY/code_snippets/blob/master/Flask_Blog/assets/register-page.png)
+
+![](https://github.com/YDongY/code_snippets/blob/master/Flask_Blog/assets/account-page.png)
 
 
 ## 技术实现
