@@ -6,6 +6,14 @@
 - 以抓取其他网站数据和用户发布作为新闻的主要来源
 - 基于 Flask 框架，以**前后端不分离**的形式实现具体业务逻辑
 
+## 预览截图
+
+![](https://github.com/YDongY/code_snippets/blob/master/Flask_News/assets/post-index.png)
+![](https://github.com/YDongY/code_snippets/blob/master/Flask_News/assets/post-detail.png)
+![](https://github.com/YDongY/code_snippets/blob/master/Flask_News/assets/user-register.png)
+![](https://github.com/YDongY/code_snippets/blob/master/Flask_News/assets/user-base-info.png)
+![](https://github.com/YDongY/code_snippets/blob/master/Flask_News/assets/new-admin.png)
+
 ## 技术实现
 
 - 基于 Python 3.7 + Flask 框架实现
