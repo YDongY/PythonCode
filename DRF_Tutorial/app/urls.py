@@ -14,4 +14,5 @@ urlpatterns = [
     path('drf-books/', views.DRFBooksAPIView.as_view()),
     path('drf-books/<pk>/', views.DRFBookAPIView.as_view()),
     path('drf-heros/', views.DRFHerosAPIView.as_view()),
+    path('drf-heros/<pk>/', views.DRFHeroAPIView.as_view()),
 ]

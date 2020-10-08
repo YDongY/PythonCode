@@ -8,7 +8,7 @@ from rest_framework.views import APIView, status
 from rest_framework.response import Response
 
 from .models import BookInfo, HeroInfo
-from .serializers import BookInfoSerializer, HeroInfoSerializer
+from .serializers import BookInfoSerializer, HeroInfoSerializer, HeroModelSerializer
 
 
 class BooksAPIVIew(View):
@@ -131,7 +131,12 @@ class DRFBooksAPIView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request):
-        pass
+        data = request.data
+        serializer = BookInfoSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.validated_data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class DRFBookAPIView(APIView):
@@ -153,12 +158,37 @@ class DRFBookAPIView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk):
-        pass
+        book = BookInfo.objects.filter(id=pk).first()
+        if book:
+            book.delete()
+            return Response(status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class DRFHerosAPIView(APIView):
     def get(self, request):
         queryset = HeroInfo.objects.all()
-        serializer = HeroInfoSerializer(instance=queryset, many=True)
+        # 模型类序列化器
+        serializer = HeroModelSerializer(instance=queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    def post(self, request):
+        data = request.data
+        serializer = HeroModelSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.validated_data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class DRFHeroAPIView(APIView):
+    def get(self, request, pk):
+        hero = HeroInfo.objects.filter(id=pk).first()
+        serializer = HeroModelSerializer(instance=hero)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def put(self):
+        pass
+
+    def delete(self, request):
+        pass

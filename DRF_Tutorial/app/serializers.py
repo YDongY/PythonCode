@@ -2,7 +2,7 @@
 # __Author__ : '__YDongY__'
 
 from rest_framework import serializers
-from .models import BookInfo
+from .models import BookInfo, HeroInfo
 
 
 def about_django(value):
@@ -91,3 +91,11 @@ book = BookInfoSerializer()
 heroinfo_set = serializers.PrimaryKeyRelatedField(read_only=True, many=True)  
 
 """
+
+
+class HeroModelSerializer(serializers.ModelSerializer):
+    book = BookInfoSerializer()
+
+    class Meta:
+        model = HeroInfo
+        fields = ('id', 'name', 'gender', 'description', 'book')

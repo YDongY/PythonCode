@@ -1,5 +1,7 @@
 # Django REST Framework Tutorial
 
+[TOC]
+
 Django REST Framework 是方便 Django 框架设计 REST API
 
 ## RESTful
@@ -121,4 +123,611 @@ INSTALLED_APPS = [
     'rest_framework',
 ]
 ```
+
+## Serializer 序列化器
+
+### [Serializer](https://www.django-rest-framework.org/api-guide/serializers/#serializers)
+
+```python
+from rest_framework import serializers
+
+class CommentSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    content = serializers.CharField(max_length=200)
+    created = serializers.DateTimeField()
+```
+
+- 序列化
+
+```python
+from . import CommentSerializer
+
+serializer = CommentSerializer(comment)
+serializer.data
+# {'email': 'leila@example.com', 'content': 'foo bar', 'created': '2016-01-27T15:17:10.375877'}
+```
+
+- 反序列化
+
+```python
+serializer = CommentSerializer(data=data)
+serializer.is_valid()
+# True
+serializer.validated_data
+# {'content': 'foo bar', 'email': 'leila@example.com', 'created': datetime.datetime(2012, 08, 22, 16, 20, 09, 822243)}
+```
+
+- 保存
+
+> 如果创建序列化器对象的时候，没有传递instance实例，则调用save()方法的时候，create()被调用，相反，如果传递了instance实例，则调用save()方法的时候，update()被调用。
+
+```python
+# .save() will create a new instance.
+serializer = CommentSerializer(data=data)
+
+# .save() will update the existing `comment` instance.
+serializer = CommentSerializer(comment, data=data)
+
+comment = serializer.save()
+```
+
+```python
+class CommentSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    content = serializers.CharField(max_length=200)
+    created = serializers.DateTimeField()
+
+    def create(self, validated_data):
+        return Comment(**validated_data)
+
+    def update(self, instance, validated_data):
+        instance.email = validated_data.get('email', instance.email)
+        instance.content = validated_data.get('content', instance.content)
+        instance.created = validated_data.get('created', instance.created)
+        return instance
+```
+
+### [ModelSerializer](https://www.django-rest-framework.org/api-guide/serializers/#modelserializer)
+
+```python
+class AccountSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Account
+        fields = ['id', 'account_name', 'users', 'created']
+        read_only_fields = ['account_name'] # 只读字段
+        extra_kwargs = {'account_name': {'write_only': True}} # 额外参数
+```
+
+### [HyperlinkedModelSerializer](https://www.django-rest-framework.org/api-guide/serializers/#hyperlinkedmodelserializer)
+
+> 默认情况下，序列化程序将包含一个 url 字段而不是主键字段。
+
+```python
+class AccountSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Account
+        fields = ['account_url', 'account_name', 'users', 'created']
+        extra_kwargs = {
+            'url': {'view_name': 'accounts', 'lookup_field': 'account_name'},
+            'users': {'lookup_field': 'username'}
+        }
+```
+
+或
+
+```python
+class AccountSerializer(serializers.HyperlinkedModelSerializer):
+    # view_name 和 urls.py 中的 name 参数相对应，表示使用哪个 url
+    # lookup_field 表示用哪个字段来作为 url 的唯一识别标记
+    url = serializers.HyperlinkedIdentityField(
+        view_name='accounts',
+        lookup_field='slug'
+    )
+    users = serializers.HyperlinkedRelatedField(
+        view_name='user-detail',
+        lookup_field='username',
+        many=True,
+        read_only=True
+    )
+
+    class Meta:
+        model = Account
+        fields = ['url', 'account_name', 'users', 'created']
+```
+
+### [ListSerializer](https://www.django-rest-framework.org/api-guide/serializers/#listserializer)
+
+ListSerializer 类提供了序列化和一次验证多个对象的行为。通常不需要 ListSerializer 直接使用，而应该 many=True 在实例化序列化程序时指定
+
+## 视图
+
+### [APIView](https://www.django-rest-framework.org/api-guide/views/#class-based-views)
+
+```python
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import authentication, permissions
+from django.contrib.auth.models import User
+
+class ListUsers(APIView):
+    """
+    View to list all users in the system.
+
+    * Requires token authentication.
+    * Only admin users are able to access this view.
+    """
+    authentication_classes = [authentication.TokenAuthentication]
+    permission_classes = [permissions.IsAdminUser]
+
+    def get(self, request, format=None):
+        """
+        Return a list of all users.
+        """
+        usernames = [user.username for user in User.objects.all()]
+        return Response(usernames)
+```
+
+### [GenericAPIView](https://www.django-rest-framework.org/api-guide/generic-views/#genericapiview)
+
+```python
+from rest_framework.generics import GenericAPIView
+from rest_framework.response import Response
+from rest_framework import authentication, permissions
+from django.contrib.auth.models import User
+
+class UserDetailView(GenericAPIView):
+    
+    queryset = User.objects.all()
+    serializer_class = UserInfoSerializer
+    authentication_classes = [authentication.TokenAuthentication]
+    permission_classes = [permissions.IsAdminUser]
+
+    def get(self, request, pk):
+        user = self.get_object()
+        serializer = self.get_serializer(user)
+        return Response(serializer.data)
+```
+
+### [ListModelMixin](https://www.django-rest-framework.org/api-guide/generic-views/#listmodelmixin)
+
+列表视图扩展类，提供 list(request, *args, **kwargs) 方法快速实现列表视图，返回200状态码。
+
+该 Mixin 的 list 方法会对数据进行过滤和分页。
+
+源代码：
+```python
+class ListModelMixin(object):
+    """
+    List a queryset.
+    """
+    def list(self, request, *args, **kwargs):
+        # 过滤
+        queryset = self.filter_queryset(self.get_queryset())
+        # 分页
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        # 序列化
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+```
+
+### [CreateModelMixin](https://www.django-rest-framework.org/api-guide/generic-views/#createmodelmixin)
+
+创建视图扩展类，提供create(request, *args, **kwargs)方法快速实现创建资源的视图，成功返回201状态码。
+
+如果序列化器对前端发送的数据验证失败，返回400错误。
+
+源代码：
+```python
+class CreateModelMixin(object):
+    """
+    Create a model instance.
+    """
+    def create(self, request, *args, **kwargs):
+        # 获取序列化器
+        serializer = self.get_serializer(data=request.data)
+        # 验证
+        serializer.is_valid(raise_exception=True)
+        # 保存
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def perform_create(self, serializer):
+        serializer.save()
+
+    def get_success_headers(self, data):
+        try:
+            return {'Location': str(data[api_settings.URL_FIELD_NAME])}
+        except (TypeError, KeyError):
+            return {}
+```
+
+### [RetrieveModelMixin](https://www.django-rest-framework.org/api-guide/generic-views/#retrievemodelmixin)
+详情视图扩展类，提供retrieve(request, *args, **kwargs)方法，可以快速实现返回一个存在的数据对象。
+
+如果存在，返回200， 否则返回404。
+
+源代码：
+```python
+class RetrieveModelMixin(object):
+    """
+    Retrieve a model instance.
+    """
+    def retrieve(self, request, *args, **kwargs):
+        # 获取对象，会检查对象的权限
+        instance = self.get_object()
+        # 序列化
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+```
+
+### [UpdateModelMixin](https://www.django-rest-framework.org/api-guide/generic-views/#updatemodelmixin)
+更新视图扩展类，提供update(request, *args, **kwargs)方法，可以快速实现更新一个存在的数据对象。
+
+同时也提供partial_update(request, *args, **kwargs)方法，可以实现局部更新。
+
+成功返回200，序列化器校验数据失败时，返回400错误。
+
+源代码：
+```python
+class UpdateModelMixin(object):
+    """
+    Update a model instance.
+    """
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        if getattr(instance, '_prefetched_objects_cache', None):
+            # If 'prefetch_related' has been applied to a queryset, we need to
+            # forcibly invalidate the prefetch cache on the instance.
+            instance._prefetched_objects_cache = {}
+
+        return Response(serializer.data)
+
+    def perform_update(self, serializer):
+        serializer.save()
+
+    def partial_update(self, request, *args, **kwargs):
+        kwargs['partial'] = True
+        return self.update(request, *args, **kwargs)
+```
+
+### [DestroyModelMixin](https://www.django-rest-framework.org/api-guide/generic-views/#destroymodelmixin)
+删除视图扩展类，提供destroy(request, *args, **kwargs)方法，可以快速实现删除一个存在的数据对象。
+
+成功返回204，不存在返回404。
+
+源代码：
+```python
+class DestroyModelMixin(object):
+    """
+    Destroy a model instance.
+    """
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def perform_destroy(self, instance):
+        instance.delete()
+```
+
+### [Concrete View Classes](https://www.django-rest-framework.org/api-guide/generic-views/#concrete-view-classes)
+
+| 类                           | 方法                    | 描述                                                         |
+| ---------------------------- | ----------------------- | ------------------------------------------------------------ |
+| CreateAPIView                | post                    | 继承自： GenericAPIView、CreateModelMixin                    |
+| ListAPIView                  | get                     | 继承自：GenericAPIView、ListModelMixin                       |
+| RetireveAPIView              | get                     | 继承自: GenericAPIView、RetrieveModelMixin                   |
+| DestoryAPIView               | delete                  | 继承自：GenericAPIView、DestoryModelMixin                    |
+| UpdateAPIView                | put、patch              | 继承自：GenericAPIView、UpdateModelMixin                     |
+| RetrieveUpdateAPIView        | get、put、patch         | 继承自： GenericAPIView、RetrieveModelMixin、UpdateModelMixin |
+| RetrieveUpdateDestoryAPIView | get、put、patch、delete | 继承自：GenericAPIView、RetrieveModelMixin、UpdateModelMixin、DestoryModelMixin |
+
+### [Customizing the generic views](https://www.django-rest-framework.org/api-guide/generic-views/#customizing-the-generic-views)
+
+#### 创建自定义 Mixin
+
+例如，如果您需要根据 URL conf 中的多个字段查找对象，则可以创建一个 mixin 类。
+
+```python
+class MultipleFieldLookupMixin:
+    """
+    Apply this mixin to any view or viewset to get multiple field filtering
+    based on a `lookup_fields` attribute, instead of the default single field filtering.
+    """
+    def get_object(self):
+        queryset = self.get_queryset()             # Get the base queryset
+        queryset = self.filter_queryset(queryset)  # Apply any filter backends
+        filter = {}
+        for field in self.lookup_fields:
+            if self.kwargs[field]: # Ignore empty fields.
+                filter[field] = self.kwargs[field]
+        obj = get_object_or_404(queryset, **filter)  # Lookup the object
+        self.check_object_permissions(self.request, obj)
+        return obj
+```
+
+随后可以在需要应用自定义行为的任​​何时候，将该 mixin 应用于视图或视图集。
+
+```python
+class RetrieveUserView(MultipleFieldLookupMixin, generics.RetrieveAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    lookup_fields = ['account', 'username']
+```
+
+## [ViewSets](https://www.django-rest-framework.org/api-guide/viewsets/#viewsets)
+
+ViewSet 类只是一种基于类的 View，它不提供任何处理方法，如 .get() 或 .post()，而是提供诸如 .list() 和 .create() 之类的操作。
+
+ViewSet 只在用 .as_view() 方法绑定到最终化视图时做一些相应操作。
+
+通常，不是在 urlconf 中的视图集中明确注册视图，而是使用路由器类注册视图集，这会自动为您确定 urlconf。
+
+定义一个简单的视图集，可以用来列出或检索系统中的所有用户。
+
+```python
+from django.contrib.auth.models import User
+from django.shortcuts import get_object_or_404
+from myapps.serializers import UserSerializer
+from rest_framework import viewsets
+from rest_framework.response import Response
+
+class UserViewSet(viewsets.ViewSet):
+
+    def list(self, request):
+        queryset = User.objects.all()
+        serializer = UserSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def retrieve(self, request, pk=None):
+        queryset = User.objects.all()
+        user = get_object_or_404(queryset, pk=pk)
+        serializer = UserSerializer(user)
+        return Response(serializer.data)
+```
+
+如果需要，可以将这个视图集合成两个单独的视图，如下所示：
+
+```python
+user_list = UserViewSet.as_view({'get': 'list'})
+user_detail = UserViewSet.as_view({'get': 'retrieve'})
+```
+
+通常情况下，我们不会这样做，而是用路由器注册视图集，并允许自动生成 urlconf。
+
+```python
+from myapp.views import UserViewSet
+from rest_framework.routers import DefaultRouter
+
+router = DefaultRouter()
+router.register(r'users', UserViewSet, base_name='user')
+urlpatterns = router.urls
+```
+
+- [标记额外的路由行为](http://drf.jiuyou.info/#/drf/viewsets?id=%e6%a0%87%e8%ae%b0%e9%a2%9d%e5%a4%96%e7%9a%84%e8%b7%af%e7%94%b1%e8%a1%8c%e4%b8%ba)
+- [action 跳转](http://drf.jiuyou.info/#/drf/viewsets?id=action-%e8%b7%b3%e8%bd%ac)
+
+
+| 类                   | 描述                                                         |
+| -------------------- | ------------------------------------------------------------ |
+| ViewSet              | 继承自`APIView`，作用也与 APIView 基本类似，提供了身份认证、权限校验、流量管理等。在 ViewSet 中，没有提供任何动作 action 方法，需要我们自己实现 action 方法。 |
+| GenericViewSet       | 继承自`GenericAPIView`，作用也与 GenericAPIVIew 类似，提供了 get_object、get_queryset 等方法便于列表视图与详情信息视图的开发。 |
+| ModelViewSet         | 继承自`GenericAPIVIew`，同时包括了ListModelMixin、RetrieveModelMixin、CreateModelMixin、UpdateModelMixin、DestoryModelMixin。 |
+| ReadOnlyModelViewSet | 继承自`GenericAPIVIew`，同时包括了ListModelMixin、RetrieveModelMixin。 |
+
+## [Routers](https://www.django-rest-framework.org/api-guide/routers/#routers)
+
+```python
+from rest_framework import routers
+
+router = routers.SimpleRouter()
+router.register(r'users', UserViewSet)
+router.register(r'accounts', AccountViewSet)
+urlpatterns = router.urls
+```
+
+register() 方法有两个必须参数：
+
+- prefix - 设置这组路由的前缀。
+- viewset - 设置对应的视图集类
+
+上面的例子会生成以下 URL 模式：
+
+- URL pattern: ^users/$         Name: 'user-list'
+- URL pattern: ^users/{pk}/$    Name: 'user-detail'
+- URL pattern: ^accounts/$      Name: 'account-list'
+- URL pattern: ^accounts/{pk}/$ Name: 'account-detail'
+
+## [Parsers](https://www.django-rest-framework.org/api-guide/parsers/#parsers)
+
+当访问 request.data 时，REST framework 将检查传入请求的 Content-Type ，并确定使用哪个解析器来解析请求内容。
+
+### Setting the parsers
+
+```python
+REST_FRAMEWORK = {
+    'DEFAULT_PARSER_CLASSES': [
+        'rest_framework.parsers.JSONParser',
+    ]
+}
+```
+
+还可以在基于类（API​​View ）的视图上设置单个视图或视图集的解析器。
+
+```python
+from rest_framework.parsers import JSONParser
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+class ExampleView(APIView):
+    """
+    A view that can accept POST requests with JSON content.
+    """
+    parser_classes = (JSONParser,)
+
+    def post(self, request, format=None):
+        return Response({'received data': request.data})
+```
+
+或者和 @api_view 装饰器一起使用。
+
+```python
+from rest_framework.decorators import api_view
+from rest_framework.decorators import parser_classes
+from rest_framework.parsers import JSONParser
+
+@api_view(['POST'])
+@parser_classes((JSONParser,))
+def example_view(request, format=None):
+    """
+    A view that can accept POST requests with JSON content.
+    """
+    return Response({'received data': request.data})
+```
+
+### [API Reference](https://www.django-rest-framework.org/api-guide/parsers/#api-reference)
+
+| 解析类           | 说明                                                         | 类型                              |
+| ---------------- | ------------------------------------------------------------ | --------------------------------- |
+| JSONParser       | 解析 JSON 请求内容。                                         | application/json                  |
+| FormParser       | 解析 HTML 表单内容。`request.data` 是一个 `QueryDict` 字典，包含所有表单参数。通常需要同时使用 `FormParser` 和 `MultiPartParser`，以完全支持 HTML 表单数据。 | application/x-www-form-urlencoded |
+| MultiPartParser  | 解析文件上传的 multipart HTML 表单内容                       | application/form-data             |
+| FileUploadParser | 解析文件上传内容。 `request.data` 是一个 `QueryDict` （只包含一个存有文件的 `'file'` key）。 | */*                               |
+
+基本用法示例：
+
+```python
+# views.py
+class FileUploadView(views.APIView):
+    parser_classes = (FileUploadParser,)
+
+    def put(self, request, filename, format=None):
+        file_obj = request.data['file']
+        # ...
+        # do some stuff with uploaded file
+        # ...
+        return Response(status=204)
+
+# urls.py
+urlpatterns = [
+    # ...
+    url(r'^upload/(?P<filename>[^/]+)$', FileUploadView.as_view())
+]
+```
+
+### [Custom parsers](https://www.django-rest-framework.org/api-guide/parsers/#custom-parsers)
+
+要实现自定义解析器，应该继承 BaseParser，设置 .media_type 属性并实现 .parse(self,stream,media_type,parser_context) 方法。
+
+该方法应该返回将用于填充 request.data 属性的数据。
+
+传递给 .parse() 的参数是：
+
+- stream：表示请求正文的流式对象。
+- media_type：可选。如果提供，则这是传入请求内容的 media type。
+- parser_context：可选。如果提供，则该参数将是一个包含解析请求内容可能需要的任何其他上下文的字典。默认情况下，这将包括以下 key：view，request，args，kwargs。
+
+
+```python
+class PlainTextParser(BaseParser):
+    """
+    Plain text parser.
+    """
+    media_type = 'text/plain'
+
+    def parse(self, stream, media_type=None, parser_context=None):
+        """
+        Simply return a string representing the body of the request.
+        """
+        return stream.read()
+```
+
+## [Renderers](https://www.django-rest-framework.org/api-guide/renderers/#renderers)
+
+使用 DEFAULT_RENDERER_CLASSES 设置全局的默认渲染器集。例如，以下设置将使用JSON作为主要 media type，并且还包含自描述 API。
+
+```python
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    )
+}
+```
+
+还可以使用基于 API​​View 的视图类来设置单个视图或视图集的渲染器。
+
+```python
+from django.contrib.auth.models import User
+from rest_framework.renderers import JSONRenderer
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+class UserCountView(APIView):
+    """
+    A view that returns the count of active users in JSON.
+    """
+    renderer_classes = (JSONRenderer, )
+
+    def get(self, request, format=None):
+        user_count = User.objects.filter(active=True).count()
+        content = {'user_count': user_count}
+        return Response(content)
+```
+
+或者是在基于 @api_view 装饰器的函数视图上设置。
+
+```python
+@api_view(['GET'])
+@renderer_classes((JSONRenderer,))
+def user_count_view(request, format=None):
+    """
+    A view that returns the count of active users in JSON.
+    """
+    user_count = User.objects.filter(active=True).count()
+    content = {'user_count': user_count}
+    return Response(content)
+```
+
+- JSONRenderer
+- TemplateHTMLRenderer
+- StaticHTMLRenderer
+- BrowsableAPIRenderer
+- AdminRenderer
+- HTMLFormRenderer
+- MultiPartRenderer
+
+### [Custom renderers](https://www.django-rest-framework.org/api-guide/renderers/#custom-renderers)
+
+要实现自定义渲染器，您应该继承 BaseRenderer ，设置 .media_type 和 .format 属性，并实现 .render(self, data, media_type=None, renderer_context=None) 方法。
+
+```python
+from django.utils.encoding import smart_text
+from rest_framework import renderers
+
+
+class PlainTextRenderer(renderers.BaseRenderer):
+    media_type = 'text/plain'
+    format = 'txt'
+    charset = 'iso-8859-1'
+
+    def render(self, data, media_type=None, renderer_context=None):
+        return smart_text(data, encoding=self.charset)
+```
+
+## [Authentication](https://www.django-rest-framework.org/api-guide/authentication/#authentications)
+
+## 相关参考
+
+- https://www.django-rest-framework.org/
+- http://drf.jiuyou.info/#/
 
