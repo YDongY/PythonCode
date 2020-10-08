@@ -1,6 +1,51 @@
 # Django REST Framework Tutorial
 
-[TOC]
+* [Django REST Framework Tutorial](#django-rest-framework-tutorial)
+      * [RESTful](#restful)
+      * [Django &amp; Django REST framework](#django--django-rest-framework)
+      * [环境安装与配置](#环境安装与配置)
+      * [Serializer 序列化器](#serializer-序列化器)
+         * [<a href="https://www.django-rest-framework.org/api-guide/serializers/#serializers" rel="nofollow">Serializer</a>](#serializer)
+         * [<a href="https://www.django-rest-framework.org/api-guide/serializers/#modelserializer" rel="nofollow">ModelSerializer</a>](#modelserializer)
+         * [<a href="https://www.django-rest-framework.org/api-guide/serializers/#hyperlinkedmodelserializer" rel="nofollow">HyperlinkedModelSerializer</a>](#hyperlinkedmodelserializer)
+         * [<a href="https://www.django-rest-framework.org/api-guide/serializers/#listserializer" rel="nofollow">ListSerializer</a>](#listserializer)
+      * [视图](#视图)
+         * [<a href="https://www.django-rest-framework.org/api-guide/views/#class-based-views" rel="nofollow">APIView</a>](#apiview)
+         * [<a href="https://www.django-rest-framework.org/api-guide/generic-views/#genericapiview" rel="nofollow">GenericAPIView</a>](#genericapiview)
+         * [<a href="https://www.django-rest-framework.org/api-guide/generic-views/#listmodelmixin" rel="nofollow">ListModelMixin</a>](#listmodelmixin)
+         * [<a href="https://www.django-rest-framework.org/api-guide/generic-views/#createmodelmixin" rel="nofollow">CreateModelMixin</a>](#createmodelmixin)
+         * [<a href="https://www.django-rest-framework.org/api-guide/generic-views/#retrievemodelmixin" rel="nofollow">RetrieveModelMixin</a>](#retrievemodelmixin)
+         * [<a href="https://www.django-rest-framework.org/api-guide/generic-views/#updatemodelmixin" rel="nofollow">UpdateModelMixin</a>](#updatemodelmixin)
+         * [<a href="https://www.django-rest-framework.org/api-guide/generic-views/#destroymodelmixin" rel="nofollow">DestroyModelMixin</a>](#destroymodelmixin)
+         * [<a href="https://www.django-rest-framework.org/api-guide/generic-views/#concrete-view-classes" rel="nofollow">Concrete View Classes</a>](#concrete-view-classes)
+         * [<a href="https://www.django-rest-framework.org/api-guide/generic-views/#customizing-the-generic-views" rel="nofollow">Customizing the generic views</a>](#customizing-the-generic-views)
+            * [创建自定义 Mixin](#创建自定义-mixin)
+      * [<a href="https://www.django-rest-framework.org/api-guide/viewsets/#viewsets" rel="nofollow">ViewSets</a>](#viewsets)
+      * [<a href="https://www.django-rest-framework.org/api-guide/routers/#routers" rel="nofollow">Routers</a>](#routers)
+      * [<a href="https://www.django-rest-framework.org/api-guide/parsers/#parsers" rel="nofollow">Parsers</a>](#parsers)
+         * [<a href="https://www.django-rest-framework.org/api-guide/parsers/#setting-the-parsers" rel="nofollow">Setting the parsers</a>](#setting-the-parsers)
+         * [<a href="https://www.django-rest-framework.org/api-guide/parsers/#api-reference" rel="nofollow">API Reference</a>](#api-reference)
+         * [<a href="https://www.django-rest-framework.org/api-guide/parsers/#custom-parsers" rel="nofollow">Custom parsers</a>](#custom-parsers)
+      * [<a href="https://www.django-rest-framework.org/api-guide/renderers/#renderers" rel="nofollow">Renderers</a>](#renderers)
+         * [<a href="https://www.django-rest-framework.org/api-guide/renderers/#custom-renderers" rel="nofollow">Custom renderers</a>](#custom-renderers)
+      * [<a href="https://www.django-rest-framework.org/api-guide/authentication/#authentications" rel="nofollow">Authentication</a>](#authentication)
+         * [<a href="https://www.django-rest-framework.org/api-guide/authentication/#api-reference" rel="nofollow">API Reference</a>](#api-reference-1)
+         * [<a href="https://www.django-rest-framework.org/api-guide/authentication/#custom-authentication" rel="nofollow">Custom authentication</a>](#custom-authentication)
+      * [<a href="https://www.django-rest-framework.org/api-guide/permissions/#permissions" rel="nofollow">Permissions</a>](#permissions)
+         * [<a href="https://www.django-rest-framework.org/api-guide/permissions/#custom-permissions" rel="nofollow">Custom permissions</a>](#custom-permissions)
+      * [<a href="https://www.django-rest-framework.org/api-guide/throttling/#throttling" rel="nofollow">Throttling</a>](#throttling)
+         * [<a href="https://www.django-rest-framework.org/api-guide/throttling/#custom-throttles" rel="nofollow">Custom throttles</a>](#custom-throttles)
+      * [<a href="https://www.django-rest-framework.org/api-guide/filtering/#filtering" rel="nofollow">Filtering</a>](#filtering)
+         * [<a href="https://www.django-rest-framework.org/api-guide/filtering/#searchfilter" rel="nofollow">SearchFilter</a>](#searchfilter)
+         * [<a href="https://www.django-rest-framework.org/api-guide/filtering/#orderingfilter" rel="nofollow">OrderingFilter</a>](#orderingfilter)
+         * [<a href="https://www.django-rest-framework.org/api-guide/filtering/#custom-generic-filtering" rel="nofollow">Custom generic filtering</a>](#custom-generic-filtering)
+      * [<a href="https://www.django-rest-framework.org/api-guide/pagination/#pagination" rel="nofollow">Pagination</a>](#pagination)
+         * [PageNumberPagination](#pagenumberpagination)
+         * [LimitOffsetPagination](#limitoffsetpagination)
+         * [<a href="https://www.django-rest-framework.org/api-guide/pagination/#custom-pagination-styles" rel="nofollow">Custom pagination styles</a>](#custom-pagination-styles)
+      * [<a href="https://www.django-rest-framework.org/api-guide/exceptions/#exceptions" rel="nofollow">Exceptions</a>](#exceptions)
+      * [<a href="https://www.django-rest-framework.org/api-guide/settings/#settings" rel="nofollow">Settings</a>](#settings)
+      * [相关参考](#相关参考)
 
 Django REST Framework 是方便 Django 框架设计 REST API
 
@@ -551,7 +596,7 @@ register() 方法有两个必须参数：
 
 当访问 request.data 时，REST framework 将检查传入请求的 Content-Type ，并确定使用哪个解析器来解析请求内容。
 
-### Setting the parsers
+### [Setting the parsers](https://www.django-rest-framework.org/api-guide/parsers/#setting-the-parsers)
 
 ```python
 REST_FRAMEWORK = {
@@ -725,6 +770,541 @@ class PlainTextRenderer(renderers.BaseRenderer):
 ```
 
 ## [Authentication](https://www.django-rest-framework.org/api-guide/authentication/#authentications)
+
+认证方案总是被定义为一个类的列表。 REST framework 将尝试使用列表中的每个类进行认证，并将使用成功认证的第一个类的返回值来设置 request.user 和 request.auth 。
+
+如果没有类进行身份验证，则将 request.user 设置为 django.contrib.auth.models.AnonymousUser 的实例，并将 request.auth 设置为 None.
+
+可以使用 UNAUTHENTICATED_USER 和 UNAUTHENTICATED_TOKEN 设置修改未经身份验证的请求的 request.user 和 request.auth 的值。
+
+在配置文件中配置全局默认的认证方案
+
+```python
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.BasicAuthentication',   # 基本认证
+        'rest_framework.authentication.SessionAuthentication',  # session认证
+    )
+}
+```
+
+也可以在每个视图中通过设置authentication_classes属性来设置
+
+```python
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.views import APIView
+
+class ExampleView(APIView):
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
+    ...
+```
+
+或者，如果您将 @api_view 装饰器与基于函数的视图一起使用。
+
+```python
+@api_view(['GET'])
+@authentication_classes((SessionAuthentication, BasicAuthentication))
+@permission_classes((IsAuthenticated,))
+def example_view(request, format=None):
+    content = {
+        'user': unicode(request.user),  # `django.contrib.auth.User` instance.
+        'auth': unicode(request.auth),  # None
+    }
+    return Response(content)
+```
+
+认证失败会有两种可能的返回值：
+
+- 401 Unauthorized 未认证
+- 403 Permission Denied 权限被禁止
+
+### [API Reference](https://www.django-rest-framework.org/api-guide/authentication/#api-reference)
+
+- BasicAuthentication
+- TokenAuthentication：此认证方案使用简单的基于令牌的 HTTP 认证方案
+
+要使用 TokenAuthentication 方案，您需要将认证类配置为包含 TokenAuthentication ，并在 INSTALLED_APPS 设置中另外包含 rest_framework.authtoken ：
+
+```python
+INSTALLED_APPS = (
+    ...
+    'rest_framework.authtoken'
+)
+```
+- SessionAuthentication：此认证方案使用 Django 的默认 session 后端进行认证
+- RemoteUserAuthentication：这种身份验证方案允许您将身份验证委托给您的 Web 服务器
+
+### [Custom authentication](https://www.django-rest-framework.org/api-guide/authentication/#custom-authentication)
+
+要实现自定义身份验证方案，请继承 BaseAuthentication 并重写 .authenticate(self, request) 方法。如果认证成功，该方法应返回 (user, auth) 的二元组，否则返回 None。
+
+```python
+from django.contrib.auth.models import User
+from rest_framework import authentication
+from rest_framework import exceptions
+
+class ExampleAuthentication(authentication.BaseAuthentication):
+    def authenticate(self, request):
+        username = request.META.get('X_USERNAME')
+        if not username:
+            return None
+
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            raise exceptions.AuthenticationFailed('No such user')
+
+        return user, None
+```
+
+## [Permissions](https://www.django-rest-framework.org/api-guide/permissions/#permissions)
+
+权限控制可以限制用户对于视图的访问和对于具体数据对象的访问。
+
+- 在执行视图的dispatch()方法前，会先进行视图访问权限的判断
+- 在通过get_object()获取具体对象时，会进行对象访问权限的判断
+
+在配置文件中设置默认的权限管理类，如
+
+```python
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    )
+}
+```
+
+如果未指明，则采用如下默认配置
+
+```python
+'DEFAULT_PERMISSION_CLASSES': (
+   'rest_framework.permissions.AllowAny',
+)
+```
+
+也可以在具体的视图中通过permission_classes属性来设置，如
+
+```python
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.views import APIView
+
+class ExampleView(APIView):
+    permission_classes = (IsAuthenticated,)
+    ...
+```
+
+或者在基于 @api_view 装饰器的函数视图上设置。
+
+```python
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+
+@api_view(['GET'])
+@permission_classes((IsAuthenticated, ))
+def example_view(request, format=None):
+    content = {
+        'status': 'request was permitted'
+    }
+    return Response(content)
+```
+
+- AllowAny 允许所有用户
+- IsAuthenticated 仅通过认证的用户
+- IsAdminUser 仅管理员用户
+- IsAuthenticatedOrReadOnly 认证的用户可以完全操作，否则只能get读取
+
+
+### [Custom permissions](https://www.django-rest-framework.org/api-guide/permissions/#custom-permissions)
+
+要实现自定义权限，请继承 BasePermission 并实现以下方法中的一个或两个：
+
+- .has_permission(self, request, view)
+- .has_object_permission(self, request, view, obj)
+
+如果请求被授予访问权限，则方法应该返回 True，否则返回 False。
+
+```python
+class IsOwnerOrReadOnly(permissions.BasePermission):
+    """
+    Object-level permission to only allow owners of an object to edit it.
+    Assumes the model instance has an `owner` attribute.
+    """
+
+    def has_object_permission(self, request, view, obj):
+        # Read permissions are allowed to any request,
+        # so we'll always allow GET, HEAD or OPTIONS requests.
+        if request.method in permissions.SAFE_METHODS:
+            return True
+
+        # Instance must have an attribute named `owner`.
+        return obj.owner == request.user
+```
+
+## [Throttling](https://www.django-rest-framework.org/api-guide/throttling/#throttling)
+
+可以使用 DEFAULT_THROTTLE_CLASSES 和 DEFAULT_THROTTLE_RATES setting 全局设置默认限流策略。例如：
+
+```python
+REST_FRAMEWORK = {
+    'DEFAULT_THROTTLE_CLASSES': (
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle'
+    ),
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '100/day',
+        'user': '1000/day'
+    }
+}
+```
+
+DEFAULT_THROTTLE_RATES 中使用的频率描述可能包括 second，minute ，hour 或 day 作为限流期。
+
+你还可以使用基于 APIView 类的视图，在每个视图或每个视图集的基础上设置限流策略。
+
+```python
+from rest_framework.response import Response
+from rest_framework.throttling import UserRateThrottle
+from rest_framework.views import APIView
+
+class ExampleView(APIView):
+    throttle_classes = (UserRateThrottle,)
+
+    def get(self, request, format=None):
+        content = {
+            'status': 'request was permitted'
+        }
+        return Response(content)
+```
+
+或者在基于 @api_view 装饰器的函数视图上设置。
+
+```python
+@api_view(['GET'])
+@throttle_classes([UserRateThrottle])
+def example_view(request, format=None):
+    content = {
+        'status': 'request was permitted'
+    }
+    return Response(content)
+```
+
+- AnonRateThrottle
+
+限制所有匿名未认证用户，使用IP区分用户。
+
+使用DEFAULT_THROTTLE_RATES['anon'] 来设置频次
+
+- UserRateThrottle
+
+限制认证用户，使用User id 来区分。
+
+使用DEFAULT_THROTTLE_RATES['user'] 来设置频次
+
+- ScopedRateThrottle
+
+限制用户对于每个视图的访问频次，使用ip或user id。
+
+例如：
+
+```python
+class ContactListView(APIView):
+    throttle_scope = 'contacts'
+    ...
+
+class ContactDetailView(APIView):
+    throttle_scope = 'contacts'
+    ...
+
+class UploadView(APIView):
+    throttle_scope = 'uploads'
+    ...
+```
+```python
+REST_FRAMEWORK = {
+    'DEFAULT_THROTTLE_CLASSES': (
+        'rest_framework.throttling.ScopedRateThrottle',
+    ),
+    'DEFAULT_THROTTLE_RATES': {
+        'contacts': '1000/day',
+        'uploads': '20/day'
+    }
+}
+```
+用户对 ContactListView 或 ContactDetailView 的请求将被限制为每天 1000 次。用户对 UploadView 的请求将被限制为每天 20 次。
+
+### [Custom throttles](https://www.django-rest-framework.org/api-guide/throttling/#custom-throttles)
+
+要自定义限流，请继承 BaseThrottle 类并实现 .allow_request(self, request, view) 方法。如果请求被允许，该方法应该返回 True，否则返回 False。
+
+或者，你也可以重写 .wait() 方法。如果实现，.wait() 应该返回建议的秒数，在尝试下一次请求之前等待，或者返回 None。如果 .allow_request() 先前已经返回 False，则只会调用 .wait() 方法。
+
+如果 .wait() 方法被实现并且请求受到限制，那么 Retry-After header 将包含在响应中。
+
+以下是限流的一个示例，随机地控制每 10 次请求中的 1 次。
+
+```python
+import random
+
+class RandomRateThrottle(throttling.BaseThrottle):
+    def allow_request(self, request, view):
+        return random.randint(1, 10) != 1
+```
+
+## [Filtering](https://www.django-rest-framework.org/api-guide/filtering/#filtering)
+
+django-filter 库包含一个 DjangoFilterBackend 类，它支持 REST framework 对字段过滤进行高度定制。
+
+要使用 DjangoFilterBackend，首先安装 django-filter。然后将 django_filters 添加到 Django 的 INSTALLED_APPS 中
+
+
+```shell script
+pip install django-filter
+```
+
+将过滤器后端添加到设置中：
+
+```python
+REST_FRAMEWORK = {
+    'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',)
+}
+```
+
+或者将过滤器后端添加到单个视图或视图集。
+
+```python
+from django_filters.rest_framework import DjangoFilterBackend
+
+class UserListView(generics.ListAPIView):
+    ...
+    filter_backends = (DjangoFilterBackend,)
+    filter_fields = ('category', 'in_stock')
+```
+
+这将自动为给定字段创建一个 FilterSet 类，并允许你发出如下请求：
+
+```http request
+http://example.com/api/products?category=clothing&in_stock=True
+```
+
+### [SearchFilter](https://www.django-rest-framework.org/api-guide/filtering/#searchfilter)
+
+SearchFilter 类将仅在视图具有 search_fields 属性集的情况下应用。search_fields 属性应该是模型上文本类型字段的名称列表，例如 CharField 或 TextField。
+
+```python
+class UserListView(generics.ListAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('username', 'email')
+```
+
+这将允许客户端通过查询来过滤列表中的项目，例如：
+
+```http request
+http://example.com/api/users?search=russell
+```
+
+你还可以使用查找 API 双下划线表示法对 ForeignKey 或 ManyToManyField 执行相关查找：
+
+```python
+search_fields = ('username', 'email', 'profile__profession')
+```
+
+搜索行为可以通过将各种字符预先添加到 search_fields 来限制。
+
+- '^' 匹配起始部分。
+- '=' 完全匹配。
+- '@' 全文搜索。（目前只支持 Django 的 MySQL 后端。）
+- '$' 正则匹配。
+例如：
+```http request
+search_fields = ('=username', '=email')
+```
+
+默认情况下，搜索参数被命名为 'search' ，但这可能会被 **SEARCH_PARAM** setting 覆盖。
+
+
+### [OrderingFilter](https://www.django-rest-framework.org/api-guide/filtering/#orderingfilter)
+
+OrderingFilter 类支持简单查询参数控制结果的排序。
+
+默认情况下，查询参数被命名为 'ordering'，但这可能会被 ORDERING_PARAM setting 覆盖。
+
+例如，要通过 username 对用户排序：
+
+```http request
+http://example.com/api/users?ordering=username
+```
+
+客户端也可以通过在字段名称前加 ' - ' 来指定反向排序，如下所示：
+
+```http request
+http://example.com/api/users?ordering=-username 
+```
+
+也可以指定多个排序：
+
+```http request
+http://example.com/api/users?ordering=account,username
+```
+
+通过在视图上设置一个 ordering_fields 属性来完成此操作，如下所示：
+
+```python
+class UserListView(generics.ListAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    filter_backends = (filters.OrderingFilter,)
+    ordering_fields = ('username', 'email')
+```
+
+### [Custom generic filtering](https://www.django-rest-framework.org/api-guide/filtering/#custom-generic-filtering)
+
+继承 BaseFilterBackend，并覆盖 .filter_queryset(self, request, queryset, view) 方法。该方法应该返回一个新的，过滤的查询集。
+
+```python
+class IsOwnerFilterBackend(filters.BaseFilterBackend):
+    """
+    Filter that only allows users to see their own objects.
+    """
+    def filter_queryset(self, request, queryset, view):
+        return queryset.filter(owner=request.user)
+```
+
+## [Pagination](https://www.django-rest-framework.org/api-guide/pagination/#pagination)
+
+分页样式可以使用 DEFAULT_PAGINATION_CLASS 和 PAGE_SIZE setting key 全局设置。例如，要使用内置的 limit/offset 分页，你可以这样做：
+
+```python
+REST_FRAMEWORK = {
+    # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'DEFAULT_PAGINATION_CLASS':  'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 100  # 每页数目
+}
+```
+
+也可通过自定义Pagination类，来为视图添加不同分页行为。在视图中通过pagination_clas属性来指明。
+
+```python
+class LargeResultsSetPagination(PageNumberPagination):
+    page_size = 1000
+    page_size_query_param = 'page_size'
+    max_page_size = 10000
+```
+
+### PageNumberPagination
+
+前端访问网址形式：
+
+```http request
+GET  http://api.example.org/books/?page=4
+```
+- page_size 每页数目
+- page_query_param 前端发送的页数关键字名，默认为"page"
+- page_size_query_param 前端发送的每页数目关键字名，默认为None
+- max_page_size 前端最多能设置的每页数量
+
+### LimitOffsetPagination
+
+前端访问网址形式：
+
+```http request
+GET http://api.example.org/books/?limit=100&offset=400
+```
+
+- default_limit 默认限制，默认值与PAGE_SIZE设置一直
+- limit_query_param limit参数名，默认'limit'
+- offset_query_param offset参数名，默认'offset'
+- max_limit 最大limit限制，默认None
+
+
+### [Custom pagination styles](https://www.django-rest-framework.org/api-guide/pagination/#custom-pagination-styles)
+
+继承 pagination.BasePagination 并覆盖 paginate_queryset(self, queryset, request, view=None) 和 get_paginated_response(self, data) 方法：
+
+- paginate_queryset 方法被传递给初始查询集，并且应该返回一个只包含请求页面中的数据的可迭代对象。
+- get_paginated_response 方法传递序列化的页面数据，并返回一个 Response 实例。
+
+假设我们想用一个修改后的格式替换默认的分页输出样式，该样式包含嵌套的 “links” key（包含上一页，下一页链接）。我们可以像这样指定一个自定义分页类：
+
+```python
+class CustomPagination(pagination.PageNumberPagination):
+    def get_paginated_response(self, data):
+        return Response({
+            'links': {
+                'next': self.get_next_link(),
+                'previous': self.get_previous_link()
+            },
+            'count': self.page.paginator.count,
+            'results': data
+        })
+```
+
+然后我们需要在配置中设置自定义类：
+
+```python
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'my_project.apps.core.pagination.CustomPagination',
+    'PAGE_SIZE': 100
+}
+```
+
+## [Exceptions](https://www.django-rest-framework.org/api-guide/exceptions/#exceptions)
+
+REST framework提供了异常处理，我们可以自定义异常处理函数。
+
+```python
+from rest_framework.views import exception_handler
+
+def custom_exception_handler(exc, context):
+    # 先调用REST framework默认的异常处理方法获得标准错误响应对象
+    response = exception_handler(exc, context)
+
+    # 在此处补充自定义的异常处理
+    if response is not None:
+        response.data['status_code'] = response.status_code
+
+    return response
+```
+
+在配置文件中声明自定义的异常处理
+
+```python
+REST_FRAMEWORK = {
+    'EXCEPTION_HANDLER': 'my_project.my_app.utils.custom_exception_handler'
+}
+```
+
+如果未声明，会采用默认的方式，如下
+
+```python
+REST_FRAMEWORK = {
+    'EXCEPTION_HANDLER': 'rest_framework.views.exception_handler'
+}
+```
+
+例如：处理关于数据库的异常
+
+```python
+from rest_framework.views import exception_handler as drf_exception_handler
+from rest_framework import status
+from django.db import DatabaseError
+
+def exception_handler(exc, context):
+    response = drf_exception_handler(exc, context)
+
+    if response is None:
+        view = context['view']
+        if isinstance(exc, DatabaseError):
+            print('[%s]: %s' % (view, exc))
+            response = Response({'detail': '服务器内部错误'}, status=status.HTTP_507_INSUFFICIENT_STORAGE)
+
+    return response
+```
+
+## [Settings](https://www.django-rest-framework.org/api-guide/settings/#settings)
+
 
 ## 相关参考
 
