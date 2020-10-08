@@ -12,11 +12,13 @@ JSON Web Token 应用场景：
 
 ## JWT 认证流程
 
-
+![](https://raw.githubusercontent.com/YDongY/code_snippets/master/JWT_Tutoiral/assets/jwt.webp)
 
 上图所示的过程进行认证，即：用户登录成功之后，服务端给用户浏览器返回一个**带盐的 JWT**，以后用户浏览器要携带 JWT 再去向服务端发送请求，服务端校验 JWT 的合法性，合法则给用户返回数据，否则，返回一些错误信息。
 
 ## JSON Web Token 结构
+
+![](https://github.com/YDongY/code_snippets/blob/master/JWT_Tutoiral/assets/jwt-structure.png)
 
 JSON Web Token 以紧凑的形式由三部分组成，这些部分由点（`.`）分隔，分别是：
 
@@ -289,3 +291,5 @@ class UserInfoAPIView(APIView):
         return Response(data=data, status=status.HTTP_200_OK)
 ```
 
+![](https://github.com/YDongY/code_snippets/blob/master/JWT_Tutoiral/assets/login-jwt.png)
+![](https://github.com/YDongY/code_snippets/blob/master/JWT_Tutoiral/assets/user-info-jwt.png)
