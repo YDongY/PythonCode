@@ -1,0 +1,27 @@
+# 版本，与本地下载的 Docker-Compose有关
+# 可在官网查看对应版本　https://docs.docker.com/compose/compose-file/
+version: "3.8"
+
+# 服务配置，一个服务就是一个容器
+services:
+
+    # 服务端容器，名称随便起，这里用 server
+    server:
+        build: server/
+        command: python ./server.py
+        ports:
+            - 5000:5000
+
+    # 客户端容器
+    client:
+        build: client/
+        command: python ./client.py
+        # 定义网络类型，这是 host 就是指 localhost,因为我们代码里写的就是 localhost
+        # 如果不指定该参数，docker-compose 会随机分配一个 ip
+        network_mode: host
+
+        # 表示当前 clinet 服务依赖于 server 服务，希望客户端服务等待，直到服务器服务准备就绪
+        depends_on:
+            - server
+
+
