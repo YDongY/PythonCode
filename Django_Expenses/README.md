@@ -25,7 +25,7 @@
 - 基于 Python 3.7 + Django 框架实现
 - 数据存储： SQLite
 - 其他工具： Celery
-- 部署：
+- 部署：Docker + Celery + redis
 
 ## 功能模块
 
@@ -45,7 +45,7 @@
     - 删除收入明细
     - 搜索
 
-## 运行
+## 本地运行
 
 - 安装依赖
 
@@ -70,6 +70,11 @@ EMAIL_HOST_USER = '😄'
 EMAIL_HOST_PASSWORD = '😄'
 # 收件人看到的发件人
 EMAIL_FROM = '😄'
+
+# CELERY_BROKER = os.environ.get("CELERY_BROKER", "redis://redis:6379/0")
+CELERY_BROKER = os.environ.get("CELERY_BROKER", "redis://127.0.0.1:6379/0")
+# CELERY_BACKEND = os.environ.get("CELERY_BACKEND", "redis://redis:6379/0")
+CELERY_BACKEND = os.environ.get("CELERY_BACKEND", "redis://127.0.0.1:6379/0")
 ```
 
 - 项目启动
@@ -82,4 +87,34 @@ python manage.py runserver
 
 ```shell script
 celery -A celery_tasks.main worker --loglevel=INFO
+```
+
+## Docker 运行
+
+- 编译
+
+```shell script
+docker-compose build
+```
+
+- 启动
+
+```shell script
+docker-compose up
+
+# or background
+
+docker-compose up -d
+```
+
+- 停止
+
+```shell script
+docker-compose stop
+```
+
+- 容器停止并清除容器和网络
+
+```shell script
+docker-compose down
 ```

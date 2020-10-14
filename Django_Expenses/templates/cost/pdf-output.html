@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PDF Output</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 2.5cm 1.5cm 3.5cm 1.5cm;
+
+            @top-center {
+                content: "COMPANY NAME";
+            }
+            @bottom-right {
+                content: "Page " counter(page) " of " counter(pages);
+            }
+        }
+    </style>
+</head>
+<body>
+<h2>Expense List</h2>
+
+<table class="table">
+    <thead class="thead">
+    <tr>
+        <th>NO</th>
+        <th>总计</th>
+        <th>描述</th>
+        <th>类型</th>
+        <th>日期</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for expense in expenses %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ expense.amount }}</td>
+            <td>{{ expense.description }}</td>
+            <td>{{ expense.category }}</td>
+            <td>{{ expense.date|date:"Y-m-d" }}</td>
+        </tr>
+    {% endfor %}
+    <tr>
+        <td>Total</td>
+        <td>{{ total }}</td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
